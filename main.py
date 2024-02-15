@@ -10,6 +10,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('Пример загрузки локальной веб-страницы')
         self.setGeometry(5,30,1355,730)
         self.browser=QWebEngineView()
+        
         # # Загрузить внешний веб-интерфейс
         # url=r'index.html'
         # self.browser.load(QUrl(url))
