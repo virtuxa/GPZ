@@ -13,7 +13,7 @@ def get_stream_handler():
     sh.setLevel(logging.DEBUG)
     return sh
 
-# Вывод в файл с логами
+# Создание и вывод в файл с логами
 def get_file_handler():
     fh = logging.handlers.RotatingFileHandler(filename="logs.log", mode="w")
     fh.setFormatter(logging.Formatter(FORMAT))
