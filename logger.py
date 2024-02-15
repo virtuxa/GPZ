@@ -15,7 +15,7 @@ def get_stream_handler():
 
 # Вывод в файл с логами
 def get_file_handler():
-    fh = logging.handlers.RotatingFileHandler(filename="logs.log")  # ??? FileHandler ???
+    fh = logging.handlers.RotatingFileHandler(filename="logs.log", mode="w")
     fh.setFormatter(logging.Formatter(FORMAT))
     fh.setLevel(logging.INFO)
     return fh
