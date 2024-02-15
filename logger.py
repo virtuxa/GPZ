@@ -35,12 +35,16 @@ def init_logger(name):
 
 # Запускаем инициализацию логгера, а также создаём логгер module.secure
 init_logger("module")
-logger = logging.getLogger("module.secure")
+logger = logging.getLogger("module.logger")
 
 def main():
     app.main()
 
 if __name__ == '__main__':
-    logger.info("Starting module...")
+    logger.info("Starting logging module...")
     main()
-    logger.info("Stopping module...")
+    logger.info("Stopping logging module...")
+
+
+
+# Использование dict?

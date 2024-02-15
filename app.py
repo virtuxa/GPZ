@@ -9,7 +9,7 @@ from PyQt6.QtWebEngineWidgets import *
 logger = logging.getLogger("module.app")
 
 def main():
-    logger.info("Start work!")
+    logger.info("Start loading app module")
     app=QApplication(sys.argv)
     win=MainWindow()
     win.show()
