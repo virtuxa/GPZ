@@ -1,8 +1,20 @@
 import sys
+import logging
+
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtWebEngineWidgets import *
+
+logger = logging.getLogger("module.app")
+
+def main():
+    logger.info("Start work!")
+    app=QApplication(sys.argv)
+    win=MainWindow()
+    win.show()
+    logger.debug("Show window")
+    app.exit(app.exec())
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -43,7 +55,4 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.browser)
 
 if __name__ == '__main__':
-    app=QApplication(sys.argv)
-    win=MainWindow()
-    win.show()
-    app.exit(app.exec())
+    main()
