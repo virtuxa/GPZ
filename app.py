@@ -100,12 +100,13 @@ class MainWindow(QMainWindow):
         horLayout1.addWidget(butSave)
         horLayout1.addWidget(butFile)
         horLayout1.addWidget(butSett)
+
+        # Привязка кнопок к левой стороне
+        horLayout1.addStretch(2)
+
         horLayout1.addWidget(butPoin)
         horLayout1.addWidget(butObje)
         horLayout1.addWidget(butTrek)
-
-        # Привязка кнопок к левой стороне
-        horLayout1.addStretch()
 
         vertLayoutMain.addLayout(horLayout1)
 
