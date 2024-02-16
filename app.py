@@ -12,6 +12,7 @@ logger = logging.getLogger("module.app")
 def main():
     logger.info("Start loading app module")
     app = QApplication(sys.argv)
+    app.setStyleSheet("MainWindow{background-color: #D9D9D9;}")
     win = MainWindow()
     win.show()
     app.exit(app.exec())
@@ -111,6 +112,7 @@ class MainWindow(QMainWindow):
         vertLayoutMain.addLayout(horLayout1)
 
         outlog = QLabel('Click me', self)
+        outlog.setStyleSheet("background-color: white;")
         outlog.setAlignment(Qt.AlignmentFlag(1))
 
         horLayout2.addWidget(yaMap,3)
