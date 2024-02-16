@@ -47,7 +47,7 @@ class MainWindow(QMainWindow):
         yaMap = QWebEngineView()
         yaMap.setHtml(open("yaMap.html").read())
 
-        # Это кнопки
+        # Создание и настройка кнопок функционального меню
         butNew = QPushButton("")
         butNew.setFixedSize(60, 60)
         butNew.setIcon(QIcon('icons/butNew.png'))
@@ -90,10 +90,12 @@ class MainWindow(QMainWindow):
         butTrek.setIconSize(QSize(60, 60))
         butTrek.clicked.connect(self.close)
 
+        # Создание 3-ех слоев
         vertLayoutMain = QVBoxLayout()
         horLayout1 = QHBoxLayout()
         horLayout2 = QHBoxLayout()
 
+        # Добавление кнопок на слой
         horLayout1.addWidget(butNew)
         horLayout1.addWidget(butSave)
         horLayout1.addWidget(butFile)
@@ -102,20 +104,22 @@ class MainWindow(QMainWindow):
         horLayout1.addWidget(butObje)
         horLayout1.addWidget(butTrek)
 
+        # Привязка кнопок к левой стороне
         horLayout1.addStretch()
 
         vertLayoutMain.addLayout(horLayout1)
 
-        text = QTextEdit()
-        text.setPlaceholderText("Текст текст")
+        outlog = QLabel('Click me', self)
+        outlog.setAlignment(Qt.AlignmentFlag(1))
 
         horLayout2.addWidget(yaMap)
-        horLayout2.addWidget(text)
+        horLayout2.addWidget(outlog)
 
         vertLayoutMain.addLayout(horLayout2)
         vertLayoutMain.setSpacing(10)
         vertLayoutMain.setContentsMargins(28, 28, 28, 28)
 
+        # Добавление общего виджета и вывод его на экран
         widget = QWidget()
         widget.setLayout(vertLayoutMain)
         self.setCentralWidget(widget)
