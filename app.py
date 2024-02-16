@@ -44,7 +44,7 @@ class MainWindow(QMainWindow):
 
         layout1.addWidget(QPushButton("123"))
         layout1.addWidget(QPushButton("123"))
-        layout1.addWidget(QPushButton("123"))
+        layout1.addWidget(QPushButton("123")) 
 
         layout2.addLayout( layout1 )
 
