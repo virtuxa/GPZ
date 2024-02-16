@@ -8,7 +8,7 @@ from PIL import Image
 
 # Global Variables
 IMG_HEIGHT, IMG_WIDTH, CHANNELS = 256, 256, 3
-ORIG_HEIGHT, ORIG_WIDTH = 0, 0
+ORIG_HEIGHT, ORIG_WIDTH = 0, 0 
 
 # Gives a tensor of size (1, IMG_HEIGHT, IMG_WIDTH, CHANNELS)
 def image_makeup(img_filepath):
