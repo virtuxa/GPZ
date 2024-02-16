@@ -111,6 +111,7 @@ class MainWindow(QMainWindow):
 
         outlog = QLabel('Click me', self)
         outlog.setAlignment(Qt.AlignmentFlag(1))
+        outlog
 
         horLayout2.addWidget(yaMap)
         horLayout2.addWidget(outlog)
