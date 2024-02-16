@@ -31,7 +31,7 @@ def clean_up_predictions(preds) -> list:
         imgs.append(image)
 
 def predict(img_path) -> list:
-    model = tf.keras.models.load_model("F:/Codes/RIP/Models/road_mapper_final.h5", custom_objects = {
+    model = tf.keras.models.load_model(".../ModelNero/road_mapper_final.h5", custom_objects = {
         "soft_dice_loss" : soft_dice_loss,
         "iou_coef" : iou_coef,
         "dice_coef_loss" : dice_coef_loss,
