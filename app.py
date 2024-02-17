@@ -47,6 +47,7 @@ class MainWindow(QMainWindow):
 
         yaMap = QWebEngineView()
         yaMap.setHtml(open("yaMap.html").read())
+        yaMap.setStyleSheet('border-radius: 50;background-color: #D9D9D9;')
 
         # Создание и настройка кнопок функционального меню
         butNew = QPushButton("")
@@ -111,9 +112,10 @@ class MainWindow(QMainWindow):
 
         vertLayoutMain.addLayout(horLayout1)
 
-        outlog = QLabel('Click me', self)
-        outlog.setStyleSheet("background-color: white;")
+        outlog = QLabel()
+        outlog.setStyleSheet("border-radius: 10;background-color: white;")
         outlog.setAlignment(Qt.AlignmentFlag(1))
+        outlog.setFont(QFont('Arial', 15))
 
         horLayout2.addWidget(yaMap,3)
         horLayout2.addWidget(outlog,1)
