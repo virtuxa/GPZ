@@ -1,28 +1,14 @@
 <!DOCTYPE html>
 <html>
     <head>
-
-        <script src="https://api-maps.yandex.ru/2.1/?lang=ru-RU" type="text/javascript"></script>
-
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <script src="https://api-maps.yandex.ru/2.1/?apikey=7494e3e7-008f-4e03-bd72-31a4650591f7&lang=ru_RU"></script>
+        <script src="script.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
         
-        <div id="myMap" style="width: 100%; height: 98lvh;"></div>
-
-        <script>
-            ymaps.ready(init);
-            function init(){
-                var myMap = new ymaps.Map ('myMap', {
-                    center: [59.850286, 30.237357],
-                    zoom: 16,
-                    type: 'yandex#satellite',
-                    controls: [
-                        'zoomControl',
-                        'searchControl',
-                    ]
-                });
-            }
-        </script>
+        <div id="map"></div>
 
     </body>
 </html>
