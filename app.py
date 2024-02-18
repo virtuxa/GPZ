@@ -8,6 +8,21 @@ from PyQt6.QtWebEngineWidgets import *
 
 logger = logging.getLogger("module.app")
 backgroundMainColor = '#e8e8e8' #D9D9D9
+FORMAT = '%(asctime)s :: %(levelname)s :: %(name)s:%(lineno)s :: %(message)s' # Задаём формат логов
+
+def get_stream_handler():
+    sh = logging.StreamHandler()
+    sh.setFormatter(logging.Formatter(FORMAT))
+    sh.setLevel(logging.DEBUG)
+    return sh
+
+def init_button(nameIcon, sizeX, sizeY):
+    button = QPushButton()
+    button.setIcon(QIcon('icons/%s.png'%nameIcon))
+    button.setIconSize(QSize(sizeX, sizeY))
+    button.setStyleSheet('border-radius: 50;background-color: %s;'%backgroundMainColor)
+
+    return button
 
 # Запускаем работу приложения
 def main():
@@ -27,48 +42,21 @@ class MainWindow(QMainWindow):
         self.setGeometry(50, 50, 1200, 900)
         self.setMinimumSize(960, 920)
 
-        # Создание и настройка виджетов кнопок
-        butNew = QPushButton()
-        butNew.setIcon(QIcon('icons/butNew.png'))
-        butNew.setIconSize(QSize(65, 65))
+        # Создание и настройка кнопок
+        butNew = init_button("butNew", 65, 65)
         butNew.clicked.connect(self.close)
-        butNew.setStyleSheet('border-radius: 50;background-color: %s;'%backgroundMainColor)
-
-        butSave = QPushButton()
-        butSave.setIcon(QIcon('icons/butSave.png'))
-        butSave.setIconSize(QSize(65, 65))
+        butSave = init_button("butSave", 65, 65)
         butSave.clicked.connect(self.close)
-        butSave.setStyleSheet('border-radius: 50;background-color: %s;'%backgroundMainColor)
-
-        butFile = QPushButton()
-        butFile.setIcon(QIcon('icons/butFile.png'))
-        butFile.setIconSize(QSize(65, 65))
+        butFile = init_button("butFile", 65, 65)
         butFile.clicked.connect(self.close)
-        butFile.setStyleSheet('border-radius: 50;background-color: %s;'%backgroundMainColor)
-
-        butSett = QPushButton()
-        butSett.setIcon(QIcon('icons/butSett.png'))
-        butSett.setIconSize(QSize(65, 65))
+        butSett = init_button("butSett", 65, 65)
         butSett.clicked.connect(self.close)
-        butSett.setStyleSheet('border-radius: 50;background-color: %s;'%backgroundMainColor)
-
-        butPoin = QPushButton()
-        butPoin.setIcon(QIcon('icons/butPoint.png'))
-        butPoin.setIconSize(QSize(130, 65))
-        butPoin.clicked.connect(self.close)
-        butPoin.setStyleSheet('border-radius: 50;background-color: %s;'%backgroundMainColor)
-
-        butObje = QPushButton()
-        butObje.setIcon(QIcon('icons/butObject.png'))
-        butObje.setIconSize(QSize(130, 65))
-        butObje.clicked.connect(self.close)
-        butObje.setStyleSheet('border-radius: 50;background-color: %s;'%backgroundMainColor)
-
-        butTrek = QPushButton()
-        butTrek.setIcon(QIcon('icons/butTrek.png'))
-        butTrek.setIconSize(QSize(130, 65))
+        butPoint = init_button("butPoint", 130, 65)
+        butPoint.clicked.connect(self.close)
+        butObject = init_button("butObject", 130, 65)
+        butObject.clicked.connect(self.close)
+        butTrek = init_button("butTrek", 130, 65)
         butTrek.clicked.connect(self.close)
-        butTrek.setStyleSheet('border-radius: 50;background-color: %s;'%backgroundMainColor)
 
         # Создание виджета выходных данных пользователя
         outlog = QLabel()
@@ -100,8 +88,8 @@ class MainWindow(QMainWindow):
         layoutSTLeftUp.addStretch(1)
 
         # Добавление второго ряда кнопок на слой
-        layoutSTRightUp.addWidget(butPoin)
-        layoutSTRightUp.addWidget(butObje)
+        layoutSTRightUp.addWidget(butPoint)
+        layoutSTRightUp.addWidget(butObject)
         layoutSTRightUp.addWidget(butTrek)
 
         # Добавление карты и выходных логов пользователя
