@@ -1,43 +1,15 @@
-ymaps.ready(function (){
+// Дождёмся загрузки API и готовности DOM.
+ymaps.ready(init);
 
-    var multiRoute = new ymaps.multiRouter.MultiRoute({
-        referencePoints: []
-    }, {
-        // Тип промежуточных точек, которые могут быть добавлены при редактировании.
-        editorMidPointsType: "via",
-        // В режиме добавления новых путевых точек запрещаем ставить точки поверх объектов карты.
-        editorDrawOver: true
-    });
+var map;
+var coordsStart;
+var coordsEnd;
+var condition = 1;
 
-    var buttonEditor = new ymaps.control.Button({
-        data: { content: "Режим редактирования" }
-    });
+function init () {
 
-    buttonEditor.events.add("select", function () {
-        /**
-         * Включение режима редактирования.
-         * В качестве опций может быть передан объект с полями:
-         * addWayPoints - разрешает добавление новых путевых точек при клике на карту. Значение по умолчанию: false.
-         * dragWayPoints - разрешает перетаскивание уже существующих путевых точек. Значение по умолчанию: true.
-         * removeWayPoints - разрешает удаление путевых точек при двойном клике по ним. Значение по умолчанию: false.
-         * dragViaPoints - разрешает перетаскивание уже существующих транзитных точек. Значение по умолчанию: true.
-         * removeViaPoints - разрешает удаление транзитных точек при двойном клике по ним. Значение по умолчанию: true.
-         * addMidPoints - разрешает добавление промежуточных транзитных или путевых точек посредством перетаскивания маркера, появляющегося при наведении курсора мыши на активный маршрут. Тип добавляемых точек задается опцией midPointsType. Значение по умолчанию: true
-         * @see https://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/multiRouter.MultiRoute.xml#editor
-         */
-        multiRoute.editor.start({
-            addWayPoints: true,
-            removeWayPoints: true
-        });
-    });
-
-    buttonEditor.events.add("deselect", function () {
-        // Выключение режима редактирования.
-        multiRoute.editor.stop();
-    });
-
-    // Создаем карту с добавленной на нее кнопкой.
-    var map = new ymaps.Map ('map', {
+    // Создание экземпляра карты и его привязка к контейнеру с тегом map
+    map = new ymaps.Map('map', {
         center: [59.850286, 30.237357],
         zoom: 16,
         type: 'yandex#satellite',
@@ -47,12 +19,75 @@ ymaps.ready(function (){
         controls: [
             'zoomControl',
             'searchControl',
-            'fullscreenControl',
-            buttonEditor
-        ]}, {
-            buttonMaxWidth: 300
-        });
+        ],
+    },{
+        searchControlProvider: 'yandex#search'
+    }),
 
-    // Добавляем мультимаршрут на карту.
-    map.geoObjects.add(multiRoute);
-});
+    // Получение координат по клику мыши
+    map.events.add('click', function(e){
+        switch (condition){
+            case 0:
+                coordsEnd = e.get('coords');
+                console.log(coordsEnd);
+                addEnd(coordsEnd);
+                console.log(condition);
+                condition+=1;
+                break;
+            case 1:
+                coordsStart = e.get('coords');
+                console.log(coordsStart);
+                addStart(coordsStart);
+                console.log(condition);
+                condition-=1;
+                break;
+        }
+    })
+
+    // Создание начальной и конечной точки
+    var placemarkStart = new ymaps.Placemark([59.850599, 30.237689], null,{
+        preset: 'islands#darkOrangeCircleDotIcon'
+    });
+
+    var placemarkEnd = new ymaps.Placemark([59.850286, 30.237357], null,{
+        preset: 'islands#pinkCircleDotIcon'
+    });
+
+    // Функции добавления точек
+    function addStart(coordsStart){
+        map.geoObjects.add(placemarkStart);
+        placemarkStart.geometry.setCoordinates([coordsStart[0], coordsStart[1]])
+    }
+
+    function addEnd(coordsEnd){
+        map.geoObjects.add(placemarkEnd);
+        placemarkEnd.geometry.setCoordinates([coordsEnd[0], coordsEnd[1]])
+
+        // Добавление линии на карту
+        map.geoObjects
+        .add(startToEndLine);
+    }
+    
+    // Создание обьекта PolyLine
+    var startToEndLine = new ymaps.Polyline([
+        // Вершины
+        placemarkStart.geometry.getCoordinates(),
+        placemarkEnd.geometry.getCoordinates(),
+    ], {
+        // Содержимое балуна.
+        balloonContent: "Генеральный маршрут"
+    }, {
+        balloonCloseButton: true,
+        strokeColor: "#f23f42",
+        strokeWidth: 4,
+        strokeOpacity: 0.8
+    });
+
+    // Следим за изменением координат точек и подгоняем линию
+    placemarkStart.geometry.events.add('change', function(e) {
+        startToEndLine.geometry.set(0, coordsStart);
+    });
+    placemarkEnd.geometry.events.add('change', function(e) {
+        startToEndLine.geometry.set(1, coordsEnd);
+    });
+}
