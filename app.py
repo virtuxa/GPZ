@@ -32,6 +32,7 @@ class MainWindow(QMainWindow):
         outlog.setStyleSheet("border-radius: 10;background-color: white;")
         outlog.setAlignment(Qt.AlignmentFlag(1))
         outlog.setFont(QFont('Arial', 15))
+        outlog.setText("\n")
 
         # Создание и настройка кнопок
         butNew = init_button("butNew", 65, 65)
@@ -105,9 +106,9 @@ def log(mess, outlog):
     logger.info(mess)
     curOutput = outlog.text()
     date = datetime.now()
-    outlog.setText(curOutput+"["+"%s:"%date.hour+"%s:"%date.minute+"%s "%date.second+"%s."%date.day+"%s."%date.month+"%s"%date.year+"]"+"\n")
+    outlog.setText(curOutput+" ["+"%s:"%date.hour+"%s:"%date.minute+"%s "%date.second+"%s."%date.day+"%s."%date.month+"%s"%date.year+"]"+"\n")
     curOutput = outlog.text()
-    outlog.setText(curOutput + mess + "\n\n")
+    outlog.setText(curOutput+" " + mess + "\n\n")
 
     return outlog
 
