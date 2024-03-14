@@ -1,43 +1,70 @@
-# Imports 
-import numpy as np
+import matplotlib.pyplot as plt
 import tensorflow as tf
+import numpy as np
+import pyautogui
+import skimage
+import cv2
+import keras
+import PIL
+from keras.src.saving import serialization_lib
+serialization_lib.enable_unsafe_deserialization()
 
-from loss_functions import dice_coef as dice_coef_loss, iou_coef, soft_dice_loss
-from skimage import transform
-from PIL import Image
 
-# Global Variables
-IMG_HEIGHT, IMG_WIDTH, CHANNELS = 256, 256, 3
-ORIG_HEIGHT, ORIG_WIDTH = 0, 0
 
-# Gives a tensor of size (1, IMG_HEIGHT, IMG_WIDTH, CHANNELS)
-def image_makeup(img_filepath):
-    np_img = tf.keras.preprocessing.image.load_img(img_filepath)
-    global ORIG_HEIGHT, ORIG_WIDTH
-    ORIG_HEIGHT, ORIG_WIDTH = np_img.size
-    np_img = np.array(np_img).astype('float32') 
-    np_img = transform.resize(np_img, (256, 256, 3))
-    np_img = np.expand_dims(np_img, axis=0)
-    return np_img
+def pic_segment(image, image_height, image_width):
+    """
+    Функция делит изображение на сегменты размером 512x512 для более точного определения КЗО
+    
+    Параметры:
+    image - изображения для сегментации
+    image_height - высота сегмента
+    image_width - ширина сегмента
+    
+    Выход:
+    В качестве выходного значения выводится массив изображений
+    """
+    segment_img = np.zeros((1, image_width, image_height, 3), dtype = np.uint8)
+    counter = 0
+    for i in range(0, image.shape[0], image_height):
+        for j in range(0, image.shape[1], image_width):
+            segment_img += np.array(image[i:i+image_height, j:j+image_width,:3])
+            counter += 1
+    return segment_img
 
-def clean_up_predictions(preds) -> list:
-    threshold = 0.05
-    preds = 255 * (preds > threshold).astype('uint8')
-    imgs = []
-    for i in range(len(preds)):
-        image = np.squeeze(preds[i][:, :, 0])
-        image = Image.fromarray(image)
-        image = image.resize((ORIG_HEIGHT, ORIG_WIDTH))
-        imgs.append(image)
+def detect_KZO(img_detect, filepath_model):
+    """
+    Функция определения КЗО
+    
+    Параметры:
+    img_detect - массив изображений для определения КЗО
+    filepath_model - место расположения файлов обученной модели
+    """
+    model = keras.models.load_model(filepath_model)
+    for i in range(0, len(img_detect)):
+        pred = model.predict(img_detect[i], verbose = 1)
+        pred_t = (pred > 0.33).astype(np.uint8)
+    return pred_t
 
-def predict(img_path) -> list:
-    model = tf.keras.models.load_model(".../ModelNero/road_mapper_final.h5", custom_objects = {
-        "soft_dice_loss" : soft_dice_loss,
-        "iou_coef" : iou_coef,
-        "dice_coef_loss" : dice_coef_loss,
-        "dice_loss" : dice_coef_loss,
-    })
+# def pic_concat(pred_t, image, image_height, image_width):
+#     x, y = image.size
+   
+def pic_outprut(pred_t,segment_img):
+    plt.figure(figsize=(100, 200))
+    for i in range(0, len(segment_img)):
+        plt.subplot(5,5,i+1)
+        skimage.io.imshow(segment_img[i])
+        plt.show
+    for j in range(0, len(pred_t)):
+        plt.subplot(5,5,j+2)
+        skimage.io.imshow(np.squeeze(pred_t[j]))
+    plt.tight_layout()
+    
 
-    preds = model.predict(image_makeup(img_path))
-    imgs_list = clean_up_predictions(preds)
-    return imgs_list
+if __name__ == "__main__":
+    filepath_model = 'F:/Codes/Model AI/Testmodel/location.keras'
+    image = cv2.imread('F:/Codes/Model AI/TESTIM.png')[:,:,:3]
+    img_wight = img_height = 512
+    
+    segment_img = pic_segment(image, img_height, img_wight)
+    pred_t = detect_KZO(segment_img, filepath_model)
+    pic_outprut(pred_t, segment_img)
