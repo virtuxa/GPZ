@@ -30,19 +30,47 @@ function init () {
             case 0:
                 coordsEnd = e.get('coords');
                 console.log(coordsEnd);
-                addEnd(coordsEnd);
+                addEnd(coordsEnd); // Добавление конечной метки
+                postCoords(coordsEnd) // Отправка координат в Python
                 console.log(condition);
                 condition+=1;
                 break;
             case 1:
                 coordsStart = e.get('coords');
                 console.log(coordsStart);
-                addStart(coordsStart);
+                addStart(coordsStart); // Добавление стартовой метки
+                postCoords(coordsStart) // Отправка координат в Python
                 console.log(condition);
                 condition-=1;
                 break;
         }
     })
+
+    // Отправка координат в Python
+    function postCoords(coords){
+        fetch('/getCoords', {
+            // Specify the method
+            method: 'POST',
+
+            // JSON
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            // A JSON payload
+            body: JSON.stringify({
+                coords
+            })
+        }).then(function (response) { // At this point, Flask has printed our JSON
+            return response.text();
+            }).then(function (text) {
+
+            console.log('POST response: ');
+
+            // Should be 'OK' if everything was successful
+            console.log(text);
+        });
+    }
 
     // Создание начальной и конечной точки
     var placemarkStart = new ymaps.Placemark([59.850599, 30.237689], null,{

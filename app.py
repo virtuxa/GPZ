@@ -1,17 +1,26 @@
 import sys
 import logging
+import web
+import json
 
-from datetime import datetime, timezone
+from datetime import datetime
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtWebEngineWidgets import *
+from threading import Thread
+from web import *
 
 logger = logging.getLogger("module.app")
 backgroundMainColor = '#e8e8e8'
 
+def htmlStart():
+    web.app.run()
+
 # Запускаем работу приложения
 def main():
+    thread1 = Thread(target=htmlStart)
+    thread1.start()
     app = QApplication(sys.argv)
     app.setStyleSheet("MainWindow{background-color: %s;}"%backgroundMainColor) 
     win = MainWindow()
@@ -44,7 +53,7 @@ class MainWindow(QMainWindow):
         butSett = init_button("butSett", 65, 65)
         butSett.clicked.connect(lambda: log("Has detected event click button butSett", outlog))
         butPoint = init_button("butPoint", 130, 65)
-        butPoint.clicked.connect(lambda: log("Has detected event click button butPoint", outlog))
+        butPoint.clicked.connect(lambda: log(web.coord, outlog))
         butObject = init_button("butObject", 130, 65)
         butObject.clicked.connect(lambda: log("Has detected event click button butObject", outlog))
         butTrek = init_button("butTrek", 130, 65)
@@ -53,7 +62,7 @@ class MainWindow(QMainWindow):
         # Создание виджета карт Yandex
         yaMap = QWebEngineView()
         # yaMap.setHtml(open("yaMap.html").read())
-        yaMap.load(QUrl('http://127.0.0.1:5500/GPZ/yaMap.html'))
+        yaMap.load(QUrl('http://127.0.0.1:5000/'))
 
 
         # Создание структурных слоёв приложения
@@ -101,7 +110,7 @@ class MainWindow(QMainWindow):
         widget.setLayout(layoutMain)
         self.setCentralWidget(widget)
 
-# Логирование
+# Логирование + запись в область output
 def log(mess, outlog):
     logger.info(mess)
     curOutput = outlog.text()
