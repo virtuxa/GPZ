@@ -1,4 +1,4 @@
-from tabnanny import verbose
+
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
@@ -40,7 +40,7 @@ def detect_KZO(image, image_height, image_width, filepath_mod):
     res = model.predict(img, verbose = 1)
     result = (res > 0.2).astype(np.uint8)
     skimage.io.imshow(np.squeeze(result))
-    plt.savefig('F:/Codes/Model AI/Segment_nero/test3.png')
+    plt.savefig('image/test3.png')
     plt.show()
     
     
@@ -59,8 +59,8 @@ def pic_outrut(pred_t,segment_img):
     
 
 if __name__ == "__main__":
-    filepath_model = 'F:/Codes/Model AI/Testmodel/location.keras'
-    image = skimage.io.imread('F:/Codes/Model AI/Segment/1.png')[:,:,:3]
+    filepath_model = 'location.keras'
+    image = skimage.io.imread('image/1.png')[:,:,:3]
     w = image.shape[0]
     h = image.shape[1]
     image_width = image_height = 512
