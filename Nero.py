@@ -1,54 +1,63 @@
 import matplotlib.pyplot as plt
-import tensorflow as tf
+import matplotlib.image as img
+import os
 import numpy as np
-import pyautogui
 import skimage
 import cv2
 import keras
-import PIL
 from keras.src.saving import serialization_lib
+from PIL import Image
+from itertools import product
 serialization_lib.enable_unsafe_deserialization()
 
-
-
-def pic_segment(image, image_height, image_width):
+def pic_segment(filename, dir_in, dir_out, d):
     """
-    Функция делит изображение на сегменты размером 512x512 для более точного определения КЗО
-    
-    Параметры:
-    image - изображения для сегментации
-    image_height - высота сегмента
-    image_width - ширина сегмента
-    
-    Выход:
-    В качестве выходного значения выводится массив изображений
-    """
-    segment_img = np.zeros((1, image_width, image_height, 3), dtype = np.uint8)
+#     The function divides the image into 512x512 segments for more accurate detection of KZO
+
+#     Parameters: 
+#     image - images for segmentation 
+#     image_height - segment height 
+#     image_width - segment width
+
+#     Output: 
+#     Saves image segments as files
+#     """
+    name, ext = os.path.splitext(filename)
+    img = Image.open(os.path.join(dir_in, filename))
+    w, h = img.size
     counter = 0
-    for i in range(0, image.shape[0], image_height):
-        for j in range(0, image.shape[1], image_width):
-            segment_img += np.array(image[i:i+image_height, j:j+image_width,:3])
-            counter += 1
-    return segment_img
 
-def detect_KZO(img_detect, filepath_model):
+    grid = product(range(0, h-h%d, d), range(0, w-w%d, d))
+    for i, j in grid:
+        box = (j, i, j+d, i+d)
+        out = os.path.join(dir_out, f'{counter}{ext}')
+        img.crop(box).save(out)
+        counter += 1
+    print("Total segments {}\n".format(counter))
+
+def detect_KZO(segmet_path, filepath_model):
     """
-    Функция определения КЗО
-    
-    Параметры:
-    img_detect - массив изображений для определения КЗО
-    filepath_model - место расположения файлов обученной модели
+    KZO detection function
+
+    Parameters:
+    img_detect - folder with image segments for EPC detection
+    filepath_model - location of trained model files
+
+    Output:
+    Saves processed segments with selected EPC objects
     """
+    files = next(os.walk(segment_path))[2]
     model = keras.models.load_model(filepath_model)
-    for i in range(0, len(img_detect)):
-        pred = model.predict(img_detect[i], verbose = 1)
+    for i in range(0, len(files)):
+        segment_image_path = segment_path + str(i) + ".png"
+        segment_image = cv2.imread(segment_image_path)[:,:,:3]
+        print(segment_image.shape[0])
+        pred = model.predict(segment_image, verbose = 1)
         pred_t = (pred > 0.33).astype(np.uint8)
-    return pred_t
-
-# def pic_concat(pred_t, image, image_height, image_width):
-#     x, y = image.size
+        img = Image.fromarray(pred_t)
+        img.imsave('F:/Codes/Model AI/Segment_nero/{}.png'.format(i))
    
-def pic_outprut(pred_t,segment_img):
+def pic_output(pred_t,segment_img):
     plt.figure(figsize=(100, 200))
     for i in range(0, len(segment_img)):
         plt.subplot(5,5,i+1)
@@ -61,10 +70,24 @@ def pic_outprut(pred_t,segment_img):
     
 
 if __name__ == "__main__":
+    import sys
     filepath_model = 'F:/Codes/Model AI/Testmodel/location.keras'
-    image = cv2.imread('F:/Codes/Model AI/TESTIM.png')[:,:,:3]
-    img_wight = img_height = 512
+    filename = "TESST.png"
+    image_path = 'F:/Codes/Model AI/'
+    segment_path = 'F:/Codes/Model AI/Segment/'
+    # image = cv2.imread('F:/Codes/Model AI/TESTIM.png')[:,:,:3]
+    if img is None:
+        print("Faild to load image file:")
+        sys.exit(1)
+    segment_path = 'F:/Codes/Model AI/Segment/'
+    img_wight = img_height = d = 512
+    for path in [segment_path]:
+        if not os.path.exists(path):
+            os.mkdir(path)
+            print("DIRECTORY CREATED: {}".format(path))
+        else:
+            print("DIRECTORY ALREADY EXISTS: {}".format(path))
     
-    segment_img = pic_segment(image, img_height, img_wight)
-    pred_t = detect_KZO(segment_img, filepath_model)
-    pic_outprut(pred_t, segment_img)
+    pic_segment(filename, image_path, segment_path, d)
+    detect_KZO(segment_path, filepath_model)
+    # pic_output(pred_t, segment_img)
