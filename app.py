@@ -1,7 +1,5 @@
 import sys
 import logging
-import web
-import json
 
 from datetime import datetime
 from PyQt6.QtCore import *
@@ -9,10 +7,13 @@ from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtWebEngineWidgets import *
 from threading import Thread
+
+import web
 from web import *
 
 logger = logging.getLogger("module.app")
 backgroundMainColor = '#e8e8e8'
+flag = 0 # Переменная для web.py
 
 def htmlStart():
     web.app.run()
@@ -22,12 +23,13 @@ def main():
     thread1 = Thread(target=htmlStart)
     thread1.start()
     app = QApplication(sys.argv)
-    app.setStyleSheet("MainWindow{background-color: %s;}"%backgroundMainColor) 
+    app.setStyleSheet("MainWindow{background-color: %s;}"%backgroundMainColor)
     win = MainWindow()
     win.show()
     app.exit(app.exec())
 
 class MainWindow(QMainWindow):
+
     def __init__(self):
         super(MainWindow, self).__init__()
 
@@ -35,7 +37,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('Генератор полётных заданий')
         self.setGeometry(50, 50, 1200, 900)
         self.setMinimumSize(960, 920)
-
+        
         # Создание виджета выходных данных пользователя
         outlog = QLabel()
         outlog.setStyleSheet("border-radius: 10;background-color: white;")
@@ -53,7 +55,7 @@ class MainWindow(QMainWindow):
         butSett = init_button("butSett", 65, 65)
         butSett.clicked.connect(lambda: log("Has detected event click button butSett", outlog))
         butPoint = init_button("butPoint", 130, 65)
-        butPoint.clicked.connect(lambda: log(web.coord, outlog))
+        butPoint.clicked.connect(lambda: showCoords(web.coordStart, web.coordEnd, outlog))
         butObject = init_button("butObject", 130, 65)
         butObject.clicked.connect(lambda: log("Has detected event click button butObject", outlog))
         butTrek = init_button("butTrek", 130, 65)
@@ -130,6 +132,10 @@ def init_button(nameIcon, sizeX, sizeY):
 
     return button
 
+# Отображение координат при нажатии кнопки butPoint в окне output
+def showCoords(coordStart, coordEnd, outlog):
+    log(coordStart, outlog)
+    log(coordEnd, outlog)
 
 if __name__ == '__main__':
     main()

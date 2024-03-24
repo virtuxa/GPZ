@@ -1,9 +1,4 @@
-2024-02-18 18:49:03,897 :: INFO :: module.logger:44 :: Starting logging module...
-2024-02-18 18:49:06,440 :: INFO :: module.app:102 :: butPoint
-2024-02-18 18:49:06,713 :: INFO :: module.app:102 :: butObject
-2024-02-18 18:49:07,024 :: INFO :: module.app:102 :: butTrek
-2024-02-18 18:49:20,097 :: INFO :: module.app:102 :: butObject
-2024-02-18 18:49:20,454 :: INFO :: module.app:102 :: butPoint
-2024-02-18 18:49:21,194 :: INFO :: module.app:102 :: butTrek
-2024-02-18 18:49:21,721 :: INFO :: module.app:102 :: butPoint
-2024-02-18 18:49:33,420 :: INFO :: module.logger:46 :: Stopping logging module...
+2024-03-24 21:44:16,488 :: INFO :: module.logger:44 :: Starting logging module...
+2024-03-24 21:44:23,481 :: INFO :: module.app:117 :: 59.851695  30.240361
+2024-03-24 21:44:23,481 :: INFO :: module.app:117 :: 59.84919  30.235834
+2024-03-24 21:44:33,697 :: INFO :: module.logger:46 :: Stopping logging module...

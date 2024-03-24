@@ -33,7 +33,7 @@ function init () {
                 addEnd(coordsEnd); // Добавление конечной метки
                 postCoords(coordsEnd) // Отправка координат в Python
                 console.log(condition);
-                condition+=1;
+                condition=2;
                 break;
             case 1:
                 coordsStart = e.get('coords');
