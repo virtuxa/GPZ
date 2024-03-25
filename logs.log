@@ -1,13 +1,40 @@
-2024-03-25 21:19:36,327 :: INFO :: module.logger:44 :: Starting logging module...
-2024-03-25 21:19:43,549 :: INFO :: module.app:117 :: 59.86552  30.215401
-2024-03-25 21:19:43,549 :: INFO :: module.app:117 :: 59.857793  30.241751
-2024-03-25 21:20:06,737 :: INFO :: module.app:117 :: Has detected event click button butSett
-2024-03-25 21:20:08,598 :: INFO :: module.app:117 :: Has detected event click button butFile
-2024-03-25 21:20:09,540 :: INFO :: module.app:117 :: Has detected event click button butSave
-2024-03-25 21:20:10,648 :: INFO :: module.app:117 :: Has detected event click button butNew
-2024-03-25 21:20:11,851 :: INFO :: module.app:117 :: Has detected event click button butObject
-2024-03-25 21:20:12,400 :: INFO :: module.app:117 :: Has detected event click button butTrek
-2024-03-25 21:20:13,466 :: INFO :: module.app:117 :: Has detected event click button butObject
-2024-03-25 21:20:13,887 :: INFO :: module.app:117 :: 59.86552  30.215401
-2024-03-25 21:20:13,887 :: INFO :: module.app:117 :: 59.857793  30.241751
-2024-03-25 21:20:19,680 :: INFO :: module.logger:46 :: Stopping logging module...
+2024-03-25 21:32:59,744 :: INFO :: module.logger:44 :: Starting logging module...
+2024-03-25 21:33:19,047 :: INFO :: module.app:117 :: 59.856873  30.2531
+2024-03-25 21:33:19,047 :: INFO :: module.app:117 :: 59.850699  30.241469
+2024-03-25 21:33:54,803 :: INFO :: module.app:117 :: Has detected event click button butNew
+2024-03-25 21:33:55,224 :: INFO :: module.app:117 :: Has detected event click button butSave
+2024-03-25 21:33:55,536 :: INFO :: module.app:117 :: Has detected event click button butFile
+2024-03-25 21:33:55,918 :: INFO :: module.app:117 :: Has detected event click button butSett
+2024-03-25 21:33:56,638 :: INFO :: module.app:117 :: Has detected event click button butObject
+2024-03-25 21:33:56,985 :: INFO :: module.app:117 :: Has detected event click button butTrek
+2024-03-25 21:34:03,115 :: INFO :: module.app:117 :: 59.856873  30.2531
+2024-03-25 21:34:03,115 :: INFO :: module.app:117 :: 59.850699  30.241469
+2024-03-25 21:34:03,261 :: INFO :: module.app:117 :: 59.856873  30.2531
+2024-03-25 21:34:03,261 :: INFO :: module.app:117 :: 59.850699  30.241469
+2024-03-25 21:34:03,401 :: INFO :: module.app:117 :: 59.856873  30.2531
+2024-03-25 21:34:03,402 :: INFO :: module.app:117 :: 59.850699  30.241469
+2024-03-25 21:34:05,828 :: INFO :: module.app:117 :: 59.856873  30.2531
+2024-03-25 21:34:05,829 :: INFO :: module.app:117 :: 59.850699  30.241469
+2024-03-25 21:34:05,980 :: INFO :: module.app:117 :: 59.856873  30.2531
+2024-03-25 21:34:05,980 :: INFO :: module.app:117 :: 59.850699  30.241469
+2024-03-25 21:34:06,148 :: INFO :: module.app:117 :: 59.856873  30.2531
+2024-03-25 21:34:06,148 :: INFO :: module.app:117 :: 59.850699  30.241469
+2024-03-25 21:34:06,678 :: INFO :: module.app:117 :: 59.856873  30.2531
+2024-03-25 21:34:06,679 :: INFO :: module.app:117 :: 59.850699  30.241469
+2024-03-25 21:34:06,845 :: INFO :: module.app:117 :: 59.856873  30.2531
+2024-03-25 21:34:06,846 :: INFO :: module.app:117 :: 59.850699  30.241469
+2024-03-25 21:34:07,015 :: INFO :: module.app:117 :: 59.856873  30.2531
+2024-03-25 21:34:07,016 :: INFO :: module.app:117 :: 59.850699  30.241469
+2024-03-25 21:34:08,106 :: INFO :: module.app:117 :: 59.856873  30.2531
+2024-03-25 21:34:08,107 :: INFO :: module.app:117 :: 59.850699  30.241469
+2024-03-25 21:34:08,260 :: INFO :: module.app:117 :: 59.856873  30.2531
+2024-03-25 21:34:08,261 :: INFO :: module.app:117 :: 59.850699  30.241469
+2024-03-25 21:34:08,401 :: INFO :: module.app:117 :: 59.856873  30.2531
+2024-03-25 21:34:08,402 :: INFO :: module.app:117 :: 59.850699  30.241469
+2024-03-25 21:34:08,569 :: INFO :: module.app:117 :: 59.856873  30.2531
+2024-03-25 21:34:08,569 :: INFO :: module.app:117 :: 59.850699  30.241469
+2024-03-25 21:34:10,432 :: INFO :: module.app:117 :: 59.856873  30.2531
+2024-03-25 21:34:10,433 :: INFO :: module.app:117 :: 59.850699  30.241469
+2024-03-25 21:34:10,583 :: INFO :: module.app:117 :: 59.856873  30.2531
+2024-03-25 21:34:10,584 :: INFO :: module.app:117 :: 59.850699  30.241469
+2024-03-25 21:34:31,659 :: INFO :: module.logger:46 :: Stopping logging module...
