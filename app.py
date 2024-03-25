@@ -1,68 +1,141 @@
 import sys
 import logging
 
+from datetime import datetime
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtWebEngineWidgets import *
-from PyQt6.QtWidgets import QTextEdit
+from threading import Thread
+
+import web
+from web import *
 
 logger = logging.getLogger("module.app")
+backgroundMainColor = '#e8e8e8'
+flag = 0 # Переменная для web.py
+
+def htmlStart():
+    web.app.run()
 
 # Запускаем работу приложения
 def main():
-    logger.info("Start loading app module")
-    app=QApplication(sys.argv)
-    win=MainWindow()
+    thread1 = Thread(target=htmlStart)
+    thread1.start()
+    app = QApplication(sys.argv)
+    app.setStyleSheet("MainWindow{background-color: %s;}"%backgroundMainColor)
+    win = MainWindow()
     win.show()
     app.exit(app.exec())
 
-class Color(QWidget):
-
-    def __init__(self, color):
-        super(Color, self).__init__()
-        self.setAutoFillBackground(True)
-
-        palette = self.palette()
-        palette.setColor(QPalette.ColorRole.Window, QColor(color))
-        self.setPalette(palette)
-
 class MainWindow(QMainWindow):
+
     def __init__(self):
         super(MainWindow, self).__init__()
 
-        self.setWindowTitle('GPZ')
-        self.setGeometry(50,50,1200,900)
-        self.setMinimumSize(900,900)
+        # Настройки главного окна
+        self.setWindowTitle('Генератор полётных заданий')
+        self.setGeometry(50, 50, 1200, 900)
+        self.setMinimumSize(960, 920)
+        
+        # Создание виджета выходных данных пользователя
+        outlog = QLabel()
+        outlog.setStyleSheet("border-radius: 10;background-color: white;")
+        outlog.setAlignment(Qt.AlignmentFlag(1))
+        outlog.setFont(QFont('Arial', 15))
+        outlog.setText("\n")
 
+        # Создание и настройка кнопок
+        butNew = init_button("butNew", 65, 65)
+        butNew.pressed.connect(lambda: log("Has detected event click button butNew", outlog))
+        butSave = init_button("butSave", 65, 65)
+        butSave.clicked.connect(lambda: log("Has detected event click button butSave", outlog))
+        butFile = init_button("butFile", 65, 65)
+        butFile.clicked.connect(lambda: log("Has detected event click button butFile", outlog))
+        butSett = init_button("butSett", 65, 65)
+        butSett.clicked.connect(lambda: log("Has detected event click button butSett", outlog))
+        butPoint = init_button("butPoint", 130, 65)
+        butPoint.clicked.connect(lambda: showCoords(web.coordStart, web.coordEnd, outlog))
+        butObject = init_button("butObject", 130, 65)
+        butObject.clicked.connect(lambda: log("Has detected event click button butObject", outlog))
+        butTrek = init_button("butTrek", 130, 65)
+        butTrek.clicked.connect(lambda: log("Has detected event click button butTrek", outlog))
+
+        # Создание виджета карт Yandex
         yaMap = QWebEngineView()
-        yaMap.setHtml(open("yaMap.html").read())
+        # yaMap.setHtml(open("yaMap.html").read())
+        yaMap.load(QUrl('http://127.0.0.1:5000/'))
 
-        layout1 = QHBoxLayout()
-        layout2 = QVBoxLayout()
-        layout3 = QHBoxLayout()
 
-        layout1.addWidget(QPushButton("123"))
-        layout1.addWidget(QPushButton("123"))
-        layout1.addWidget(QPushButton("123"))
+        # Создание структурных слоёв приложения
+        layoutMain = QHBoxLayout()
+        layoutSTLeft = QVBoxLayout()
+        layoutSTRight = QVBoxLayout()
 
-        layout2.addLayout( layout1 )
+        layoutSTLeftUp = QHBoxLayout()
+        layoutSTLeftDown = QHBoxLayout()
+        layoutSTRightUp = QHBoxLayout()
+        layoutSTRightDown = QHBoxLayout()
+        
+        # Добавление первого ряда кнопок на слой
+        layoutSTLeftUp.addWidget(butNew)
+        layoutSTLeftUp.addWidget(butSave)
+        layoutSTLeftUp.addWidget(butFile)
+        layoutSTLeftUp.addWidget(butSett)
+        layoutSTLeftUp.addStretch(1)
 
-        text = QTextEdit()
-        text.setGeometry(1500,1500,1500,1500)
-        text.setPlaceholderText("123")
+        # Добавление второго ряда кнопок на слой
+        layoutSTRightUp.addWidget(butPoint)
+        layoutSTRightUp.addWidget(butObject)
+        layoutSTRightUp.addWidget(butTrek)
 
-        layout3.addWidget(yaMap)
-        layout3.addWidget(text)
+        # Добавление карты и выходных логов пользователя
+        layoutSTLeftDown.addWidget(yaMap,3)
+        layoutSTRightDown.addWidget(outlog,1)
 
-        layout2.addLayout( layout3 )
-        layout2.setSpacing(10)
-        layout2.setContentsMargins(28,28,28,28)
+        # Распределение столбцов по опорным слоям
+        layoutSTLeft.addLayout(layoutSTLeftUp)
+        layoutSTLeft.addLayout(layoutSTLeftDown)
+        layoutSTRight.addLayout(layoutSTRightUp)
+        layoutSTRight.addLayout(layoutSTRightDown)
 
+        # Настройка отношения размеров слоёв
+        layoutMain.addLayout(layoutSTLeft,3)
+        layoutMain.addLayout(layoutSTRight,1)
+        
+        # Настройка главного слоя
+        layoutMain.setSpacing(10)
+        layoutMain.setContentsMargins(28, 28, 28, 28)
+
+        # Добавление общего виджета и вывод его на экран
         widget = QWidget()
-        widget.setLayout(layout2)
+        widget.setLayout(layoutMain)
         self.setCentralWidget(widget)
 
+# Логирование + запись в область output
+def log(mess, outlog):
+    logger.info(mess)
+    curOutput = outlog.text()
+    date = datetime.now()
+    outlog.setText(curOutput+" ["+"%s:"%date.hour+"%s:"%date.minute+"%s "%date.second+"%s."%date.day+"%s."%date.month+"%s"%date.year+"]"+"\n")
+    curOutput = outlog.text()
+    outlog.setText(curOutput+" " + mess + "\n\n")
+
+    return outlog
+
+# Конструктор кнопок 
+def init_button(nameIcon, sizeX, sizeY):
+    button = QPushButton()
+    button.setIcon(QIcon('icons/%s.png'%nameIcon))
+    button.setIconSize(QSize(sizeX, sizeY))
+    button.setStyleSheet('border-radius: 50;background-color: %s;'%backgroundMainColor)
+
+    return button
+
+# Отображение координат при нажатии кнопки butPoint в окне output
+def showCoords(coordStart, coordEnd, outlog):
+    log(coordStart, outlog)
+    log(coordEnd, outlog)
 
 if __name__ == '__main__':
     main()
