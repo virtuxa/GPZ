@@ -1,39 +1,35 @@
 import sys
 import logging
 
+from datetime import datetime
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtWebEngineWidgets import *
+from threading import Thread
+
+import web
+from web import *
 
 logger = logging.getLogger("module.app")
-backgroundMainColor = '#e8e8e8' #D9D9D9
-FORMAT = '%(asctime)s :: %(levelname)s :: %(name)s:%(lineno)s :: %(message)s' # Задаём формат логов
+backgroundMainColor = '#e8e8e8'
+flag = 0 # Переменная для web.py
 
-def get_stream_handler():
-    sh = logging.StreamHandler()
-    sh.setFormatter(logging.Formatter(FORMAT))
-    sh.setLevel(logging.DEBUG)
-    return sh
-
-def init_button(nameIcon, sizeX, sizeY):
-    button = QPushButton()
-    button.setIcon(QIcon('icons/%s.png'%nameIcon))
-    button.setIconSize(QSize(sizeX, sizeY))
-    button.setStyleSheet('border-radius: 50;background-color: %s;'%backgroundMainColor)
-
-    return button
+def htmlStart():
+    web.app.run()
 
 # Запускаем работу приложения
 def main():
-    logger.info("Start loading app module")
+    thread1 = Thread(target=htmlStart)
+    thread1.start()
     app = QApplication(sys.argv)
-    app.setStyleSheet("MainWindow{background-color: %s;}"%backgroundMainColor) 
+    app.setStyleSheet("MainWindow{background-color: %s;}"%backgroundMainColor)
     win = MainWindow()
     win.show()
     app.exit(app.exec())
 
 class MainWindow(QMainWindow):
+
     def __init__(self):
         super(MainWindow, self).__init__()
 
@@ -41,34 +37,35 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('Генератор полётных заданий')
         self.setGeometry(50, 50, 1200, 900)
         self.setMinimumSize(960, 920)
-
-        # Создание и настройка кнопок
-        butNew = init_button("butNew", 65, 65)
-        butNew.clicked.connect(self.close)
-        butSave = init_button("butSave", 65, 65)
-        butSave.clicked.connect(self.close)
-        butFile = init_button("butFile", 65, 65)
-        butFile.clicked.connect(self.close)
-        butSett = init_button("butSett", 65, 65)
-        butSett.clicked.connect(self.close)
-        butPoint = init_button("butPoint", 130, 65)
-        butPoint.clicked.connect(self.close)
-        butObject = init_button("butObject", 130, 65)
-        butObject.clicked.connect(self.close)
-        butTrek = init_button("butTrek", 130, 65)
-        butTrek.clicked.connect(self.close)
-
+        
         # Создание виджета выходных данных пользователя
         outlog = QLabel()
         outlog.setStyleSheet("border-radius: 10;background-color: white;")
         outlog.setAlignment(Qt.AlignmentFlag(1))
         outlog.setFont(QFont('Arial', 15))
-        curOutput = outlog.text()
-        outlog.setText(curOutput + '\n 123')
+        outlog.setText("\n")
+
+        # Создание и настройка кнопок
+        butNew = init_button("butNew", 65, 65)
+        butNew.pressed.connect(lambda: log("Has detected event click button butNew", outlog))
+        butSave = init_button("butSave", 65, 65)
+        butSave.clicked.connect(lambda: log("Has detected event click button butSave", outlog))
+        butFile = init_button("butFile", 65, 65)
+        butFile.clicked.connect(lambda: log("Has detected event click button butFile", outlog))
+        butSett = init_button("butSett", 65, 65)
+        butSett.clicked.connect(lambda: log("Has detected event click button butSett", outlog))
+        butPoint = init_button("butPoint", 130, 65)
+        butPoint.clicked.connect(lambda: showCoords(web.coordStart, web.coordEnd, outlog))
+        butObject = init_button("butObject", 130, 65)
+        butObject.clicked.connect(lambda: log("Has detected event click button butObject", outlog))
+        butTrek = init_button("butTrek", 130, 65)
+        butTrek.clicked.connect(lambda: log("Has detected event click button butTrek", outlog))
 
         # Создание виджета карт Yandex
         yaMap = QWebEngineView()
-        yaMap.setHtml(open("yaMap.html").read())
+        # yaMap.setHtml(open("yaMap.html").read())
+        yaMap.load(QUrl('http://127.0.0.1:5000/'))
+
 
         # Создание структурных слоёв приложения
         layoutMain = QHBoxLayout()
@@ -115,6 +112,30 @@ class MainWindow(QMainWindow):
         widget.setLayout(layoutMain)
         self.setCentralWidget(widget)
 
+# Логирование + запись в область output
+def log(mess, outlog):
+    logger.info(mess)
+    curOutput = outlog.text()
+    date = datetime.now()
+    outlog.setText(curOutput+" ["+"%s:"%date.hour+"%s:"%date.minute+"%s "%date.second+"%s."%date.day+"%s."%date.month+"%s"%date.year+"]"+"\n")
+    curOutput = outlog.text()
+    outlog.setText(curOutput+" " + mess + "\n\n")
+
+    return outlog
+
+# Конструктор кнопок 
+def init_button(nameIcon, sizeX, sizeY):
+    button = QPushButton()
+    button.setIcon(QIcon('icons/%s.png'%nameIcon))
+    button.setIconSize(QSize(sizeX, sizeY))
+    button.setStyleSheet('border-radius: 50;background-color: %s;'%backgroundMainColor)
+
+    return button
+
+# Отображение координат при нажатии кнопки butPoint в окне output
+def showCoords(coordStart, coordEnd, outlog):
+    log(coordStart, outlog)
+    log(coordEnd, outlog)
 
 if __name__ == '__main__':
     main()
