@@ -1,4 +1,10 @@
-2024-03-24 21:44:16,488 :: INFO :: module.logger:44 :: Starting logging module...
-2024-03-24 21:44:23,481 :: INFO :: module.app:117 :: 59.851695  30.240361
-2024-03-24 21:44:23,481 :: INFO :: module.app:117 :: 59.84919  30.235834
-2024-03-24 21:44:33,697 :: INFO :: module.logger:46 :: Stopping logging module...
+2024-03-25 20:51:57,339 :: INFO :: module.logger:44 :: Starting logging module...
+2024-03-25 20:52:03,739 :: INFO :: module.app:117 :: 59.853955  30.241789
+2024-03-25 20:52:03,740 :: INFO :: module.app:117 :: 59.850727  30.237905
+2024-03-25 20:52:12,957 :: INFO :: module.app:117 :: Has detected event click button butSett
+2024-03-25 20:52:13,618 :: INFO :: module.app:117 :: Has detected event click button butSave
+2024-03-25 20:52:14,068 :: INFO :: module.app:117 :: Has detected event click button butNew
+2024-03-25 20:52:14,617 :: INFO :: module.app:117 :: Has detected event click button butSave
+2024-03-25 20:52:15,482 :: INFO :: module.app:117 :: Has detected event click button butTrek
+2024-03-25 20:52:15,841 :: INFO :: module.app:117 :: Has detected event click button butObject
+2024-03-25 20:52:18,831 :: INFO :: module.logger:46 :: Stopping logging module...
