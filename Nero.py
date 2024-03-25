@@ -1,43 +1,68 @@
-# Imports 
-import numpy as np
+
+import matplotlib.pyplot as plt
 import tensorflow as tf
+import numpy as np
+import pyautogui
+import skimage
+import cv2
+import keras
+import PIL
+from keras.src.saving import serialization_lib
+serialization_lib.enable_unsafe_deserialization()
 
-from loss_functions import dice_coef as dice_coef_loss, iou_coef, soft_dice_loss
-from skimage import transform
-from PIL import Image
 
-# Global Variables
-IMG_HEIGHT, IMG_WIDTH, CHANNELS = 256, 256, 3
-ORIG_HEIGHT, ORIG_WIDTH = 0, 0
 
-# Gives a tensor of size (1, IMG_HEIGHT, IMG_WIDTH, CHANNELS)
-def image_makeup(img_filepath):
-    np_img = tf.keras.preprocessing.image.load_img(img_filepath)
-    global ORIG_HEIGHT, ORIG_WIDTH
-    ORIG_HEIGHT, ORIG_WIDTH = np_img.size
-    np_img = np.array(np_img).astype('float32') 
-    np_img = transform.resize(np_img, (256, 256, 3))
-    np_img = np.expand_dims(np_img, axis=0)
-    return np_img
+def pic_resize(image, image_height, image_width):
+    """
+    The function divides the image into 512x512 segments for more accurate detection of EPCs
 
-def clean_up_predictions(preds) -> list:
-    threshold = 0.05
-    preds = 255 * (preds > threshold).astype('uint8')
-    imgs = []
-    for i in range(len(preds)):
-        image = np.squeeze(preds[i][:, :, 0])
-        image = Image.fromarray(image)
-        image = image.resize((ORIG_HEIGHT, ORIG_WIDTH))
-        imgs.append(image)
+    Parameters: 
+    image - images for segmentation 
+    image_height - segment height 
+    image_width - segment width
 
-def predict(img_path) -> list:
-    model = tf.keras.models.load_model(".../ModelNero/road_mapper_final.h5", custom_objects = {
-        "soft_dice_loss" : soft_dice_loss,
-        "iou_coef" : iou_coef,
-        "dice_coef_loss" : dice_coef_loss,
-        "dice_loss" : dice_coef_loss,
-    })
+    Output: The output value is an array of images
+    """
+    
 
-    preds = model.predict(image_makeup(img_path))
-    imgs_list = clean_up_predictions(preds)
-    return imgs_list 
+def detect_KZO(image, image_height, image_width, filepath_mod):
+    """
+    EPC detection function
+
+    Parameters: 
+    img_detect - image array for EPC detection 
+    filepath_model - location of trained model files
+    """
+    img = np.zeros((1, image_width, image_height, 3), dtype = np.uint8)
+    model = keras.models.load_model(filepath_model)
+    res_image = skimage.transform.resize(image, (image_width, image_height), mode = 'constant', preserve_range = True)
+    img[0] = res_image
+    res = model.predict(img, verbose = 1)
+    result = (res > 0.2).astype(np.uint8)
+    skimage.io.imshow(np.squeeze(result))
+    plt.savefig('image/test3.png')
+    plt.show()
+    
+    
+    
+   
+def pic_outrut(pred_t,segment_img):
+    plt.figure(figsize=(100, 200))
+    for i in range(0, len(segment_img)):
+        plt.subplot(5,5,i+1)
+        skimage.io.imshow(segment_img[i])
+        plt.show
+    for j in range(0, len(pred_t)):
+        plt.subplot(5,5,j+2)
+        skimage.io.imshow(np.squeeze(pred_t[j]))
+    plt.tight_layout()
+    
+
+if __name__ == "__main__":
+    filepath_model = 'location.keras'
+    image = skimage.io.imread('image/1.png')[:,:,:3]
+    w = image.shape[0]
+    h = image.shape[1]
+    image_width = image_height = 512
+    
+    detect_KZO(image, image_height, image_width, filepath_model)
