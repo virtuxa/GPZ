@@ -39,9 +39,10 @@ def detect_KZO(image, image_height, image_width, filepath_mod):
     img[0] = res_image
     res = model.predict(img, verbose = 1)
     result = (res > 0.2).astype(np.uint8)
-    skimage.io.imshow(np.squeeze(result))
-    plt.savefig('image/test3.png')
-    plt.show()
+    skimage.io.imshow(np.squeeze(result), cmap = 'gray')
+    plt.savefig('image/test3.png', dpi = 150)
+    plt.show(block=False)
+    plt.close('all')
     
     
     
