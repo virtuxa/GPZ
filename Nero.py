@@ -39,8 +39,9 @@ def detect_KZO(image, image_height, image_width, filepath_mod):
     img[0] = res_image
     res = model.predict(img, verbose = 1)
     result = (res > 0.2).astype(np.uint8)
-    skimage.io.imshow(np.squeeze(result), cmap = 'gray')
-    plt.savefig('image/test3.png', dpi = 150)
+    plt.imshow(np.squeeze(result), cmap = 'gray')
+    plt.axis('off')
+    plt.savefig('image/test2.png', dpi = 150)
     
     
     
@@ -59,7 +60,7 @@ def pic_outrut(pred_t,segment_img):
 
 if __name__ == "__main__":
     filepath_model = 'location.keras'
-    image = skimage.io.imread('image/3.png')[:,:,:3]
+    image = skimage.io.imread('image/2.png')[:,:,:3]
     w = image.shape[0]
     h = image.shape[1]
     image_width = image_height = 512
