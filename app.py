@@ -1,4 +1,5 @@
 import sys
+import os
 import logging
 
 from datetime import datetime
@@ -6,22 +7,12 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtWebEngineWidgets import *
-from threading import Thread
-
-import web
-from web import *
 
 logger = logging.getLogger("module.app")
 backgroundMainColor = '#e8e8e8'
-flag = 0 # Переменная для web.py
-
-def htmlStart():
-    web.app.run()
 
 # Запускаем работу приложения
 def main():
-    thread1 = Thread(target=htmlStart)
-    thread1.start()
     app = QApplication(sys.argv)
     app.setStyleSheet("MainWindow{background-color: %s;}"%backgroundMainColor)
     win = MainWindow()
@@ -55,17 +46,16 @@ class MainWindow(QMainWindow):
         butSett = init_button("butSett", 65, 65)
         butSett.clicked.connect(lambda: log("Has detected event click button butSett", outlog))
         butPoint = init_button("butPoint", 130, 65)
-        butPoint.clicked.connect(lambda: showCoords(web.coordStart, web.coordEnd, outlog))
+        butPoint.clicked.connect(lambda: showCoords("Has detected event click button butObject", outlog))
         butObject = init_button("butObject", 130, 65)
         butObject.clicked.connect(lambda: log("Has detected event click button butObject", outlog))
         butTrek = init_button("butTrek", 130, 65)
         butTrek.clicked.connect(lambda: log("Has detected event click button butTrek", outlog))
 
-        # Создание виджета карт Yandex
-        yaMap = QWebEngineView()
-        # yaMap.setHtml(open("yaMap.html").read())
-        yaMap.load(QUrl('http://127.0.0.1:5000/'))
-
+        map_int = QWebEngineView()
+        map_int.load(QUrl.fromLocalFile(os.path.abspath('map/map.html')))
+        # map_int.setHtml(open("templates/map.html").read())
+        # map_int.load(QUrl('http://127.0.0.1:5000/'))
 
         # Создание структурных слоёв приложения
         layoutMain = QHBoxLayout()
@@ -90,7 +80,7 @@ class MainWindow(QMainWindow):
         layoutSTRightUp.addWidget(butTrek)
 
         # Добавление карты и выходных логов пользователя
-        layoutSTLeftDown.addWidget(yaMap,3)
+        layoutSTLeftDown.addWidget(map_int,3)
         layoutSTRightDown.addWidget(outlog,1)
 
         # Распределение столбцов по опорным слоям
@@ -126,7 +116,7 @@ def log(mess, outlog):
 # Конструктор кнопок 
 def init_button(nameIcon, sizeX, sizeY):
     button = QPushButton()
-    button.setIcon(QIcon('icons/%s.png'%nameIcon))
+    button.setIcon(QIcon('assets/icons/%s.png'%nameIcon))
     button.setIconSize(QSize(sizeX, sizeY))
     button.setStyleSheet('border-radius: 50;background-color: %s;'%backgroundMainColor)
 

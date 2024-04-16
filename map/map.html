@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPZ map</title>
+
+    <link rel="stylesheet" href="styles.css"/>
+    <script src="leaflet.js"></script>
+
+</head>
+<body>
+
+
+    <div id="map" style="height: 100%;"></div>
+
+    <script>
+        // Добавление карты
+        var map = L.map('map',{
+            zoom: 12,
+            min_zoom: 12,
+            max_zoom: 16,
+        }).setView([59.946991,30.237421]);
+
+        // Добавление базового слоя
+        L.tileLayer('G:/System/YandexIgnore/Личные документы/Проекты/НПП Радар/GPZ/map/vector/{z}/{x}/{y}.png', {
+            attribution: 'vector',
+            min_zoom: 12,
+            max_zoom: 13,
+            minNativeZoom: 10,
+            maxNativeZoom: 13
+        }).addTo(map);
+        L.tileLayer('G:/System/YandexIgnore/Личные документы/Проекты/НПП Радар/GPZ/map/satellite/{z}/{x}/{y}.png', {
+            attribution: 'satellite',
+            min_zoom: 14,
+            max_zoom: 16,
+            minNativeZoom: 10,
+            maxNativeZoom: 16
+        }).addTo(map);
+        
+        // Печать координат в консоль на ПКМ
+        map.on("contextmenu", function (event) {
+            console.log("Coordinates: " + event.latlng.toString());
+            console.log(map.getZoom())
+        });
+    </script>
+    
+</body>
+</html>
