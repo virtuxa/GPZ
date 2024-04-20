@@ -5,45 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GPZ map</title>
 
-    <link rel="stylesheet" href="styles.css"/>
-    <script src="leaflet.js"></script>
+    <!--  Подключение leaflet JS -->
+    <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script> -->
+    
+    <!-- Последовательное подключение dependencies -->
+    <link rel="stylesheet" href="dependencies/leaflet.css"/> 
+    <script src="dependencies/leaflet.js"></script>
+
+    <link rel="stylesheet" href="styles.css"/> 
+
+    <script src="dependencies/leaflet_geometryutil.js"></script>
+    <script src="dependencies/leaflet_arrowheads.js"></script>
+    <script src="dependencies/leaflet_mousepos.js"></script>
+    <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+
+    <script src="script.js" defer></script>
 
 </head>
 <body>
 
-
     <div id="map" style="height: 100%;"></div>
-
-    <script>
-        // Добавление карты
-        var map = L.map('map',{
-            zoom: 12,
-            min_zoom: 12,
-            max_zoom: 16,
-        }).setView([59.946991,30.237421]);
-
-        // Добавление базового слоя
-        L.tileLayer('G:/System/YandexIgnore/Личные документы/Проекты/НПП Радар/GPZ/map/vector/{z}/{x}/{y}.png', {
-            attribution: 'vector',
-            min_zoom: 12,
-            max_zoom: 13,
-            minNativeZoom: 10,
-            maxNativeZoom: 13
-        }).addTo(map);
-        L.tileLayer('G:/System/YandexIgnore/Личные документы/Проекты/НПП Радар/GPZ/map/satellite/{z}/{x}/{y}.png', {
-            attribution: 'satellite',
-            min_zoom: 14,
-            max_zoom: 16,
-            minNativeZoom: 10,
-            maxNativeZoom: 16
-        }).addTo(map);
-        
-        // Печать координат в консоль на ПКМ
-        map.on("contextmenu", function (event) {
-            console.log("Coordinates: " + event.latlng.toString());
-            console.log(map.getZoom())
-        });
-    </script>
     
 </body>
 </html>
