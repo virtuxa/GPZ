@@ -42,7 +42,9 @@ class MainWindow(QMainWindow):
     # Слот для обработки полученных координат маркера
     def handleMarkerCoordinatesChanged(self, markers):
         date = datetime.now()
-        curOutput = " "
+        curOutput = ""
+        if (len(markers)==0):
+            self.outlog.setText("")
         
         for i in range(len(markers)):
             self.outlog.setText(curOutput+f"{i+1} ["+"%s:"%date.hour+"%s:"%date.minute+"%s "%date.second+"%s."%date.day+"%s."%date.month+"%s"%date.year+"]"+'<br>'+f'<a href="{markers[i][1]}, {markers[i][2]}">Lat: {round(markers[i][1],5)}, Lng: {round(markers[i][2],5)}</a>'+'<br><br>')
@@ -55,7 +57,7 @@ class MainWindow(QMainWindow):
     # Слот для обработки нажатия на ссылку в QLabel
     def handleLabelClick(self, link):
         lat, lng = map(float, link.split(','))
-        self.map_int.page().runJavaScript(f"map.setView([{lat}, {lng}], 13)")
+        self.map_int.page().runJavaScript(f"map.setView([{lat}, {lng}], 15)")
         
     def __init__(self):
         super(MainWindow, self).__init__()

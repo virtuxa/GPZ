@@ -98,13 +98,18 @@ function updateLines(e) {
 }
 // Функция для удаления последнего маркера
 function deleteLastMarker() {
-    if (markers.length > 0) {
-        var lastMarker = markers.pop(); // Удаление последнего маркера из массива
-        var lastLine = lines.pop(); // Удаление последней линии из массива
-        map.removeLayer(lastMarker); // Удаление маркера с карты
-        map.removeLayer(lastLine); // Удаление линии с карты
-
-        markers_data.pop();
+    try {
+        if (markers.length > 0) {
+            var lastMarker = markers.pop(); // Удаление последнего маркера из массива
+            var lastLine = lines.pop(); // Удаление последней линии из массива
+            map.removeLayer(lastMarker); // Удаление маркера с карты
+            map.removeLayer(lastLine); // Удаление линии с карты
+    
+            markers_data.pop();
+            backend.receiveMarkerCoordinates(markers_data); // Отправляем данные в приложение
+        }
+    } catch (err) {
+        markers_data = [];
         backend.receiveMarkerCoordinates(markers_data); // Отправляем данные в приложение
     }
 }
