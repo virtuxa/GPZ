@@ -30,6 +30,7 @@ map.doubleClickZoom.disable(); // Отключение приближения п
 /* Отображение обьектов на карте */
 // Инициализация необходимых переменных
 var markers = []; // Переменная для хранения маркеров
+var markers_data = []; // Переменная для отправки данных в приложение
 var lines = []; // Переменная для хранения линий
 
 // Зададим настройки обьектов
@@ -59,8 +60,6 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
 
 // Функция для добавления маркеров и соединения их линиями
 function addMarkerAndConnect(e) {
-    backend.receiveMarkerCoordinates(e.latlng.lat, e.latlng.lng); // Возвращает значения координат
-
     var marker = L.marker(e.latlng, markerOptions).addTo(map);
     marker.bindPopup(e.latlng.toString()).openPopup(); // Отображение координат во всплывающем окне маркера
     markers.push(marker);
@@ -71,11 +70,15 @@ function addMarkerAndConnect(e) {
         var line = L.polyline([prevMarker, currentMarker], lineOptions).arrowheads(arrowheadsOptions).addTo(map);
         lines.push(line);
     }
+
+    var index = markers.indexOf(marker);
+
+    markers_data.push([index, e.latlng.lat, e.latlng.lng]) // Собираем все данные в массив
+    backend.receiveMarkerCoordinates(markers_data); // Отправляем данные в приложение
         
     marker.on('move', updateLines); // Обновление линий при перемещении маркера
-    marker.on('dblclick', function() { // Обработчик события для удаления последнего маркера при двойном клике
-        deleteLastMarker();
-    });
+    marker.on('dblclick', deleteLastMarker); // Удаление маркера при двойном клике
+    marker.on('dragend', updateMarkerCoordinates); // Обновление данных при перемещении маркера
 }
 // Функция для обновления позиции линий при перемещении маркера
 function updateLines(e) {
@@ -100,7 +103,21 @@ function deleteLastMarker() {
         var lastLine = lines.pop(); // Удаление последней линии из массива
         map.removeLayer(lastMarker); // Удаление маркера с карты
         map.removeLayer(lastLine); // Удаление линии с карты
+
+        markers_data.pop();
+        backend.receiveMarkerCoordinates(markers_data); // Отправляем данные в приложение
     }
+}
+// Функция обновления координат маркера при перемещении маркера
+function updateMarkerCoordinates(event) {
+    var marker = event.target;
+    var position = marker.getLatLng();
+    var lat = position.lat;
+    var lng = position.lng;
+    var index = markers.indexOf(marker);
+    markers_data[index] = ([index, lat, lng]) // Собираем все данные в массив
+
+    backend.receiveMarkerCoordinates(markers_data); // Отправляем данные в приложение
 }
 
 // Обработчик события клика по карте

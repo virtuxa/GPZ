@@ -3,11 +3,12 @@ import os
 import logging
 
 from datetime import datetime
+from PyQt6 import QtCore
+from PyQt6.QtWebChannel import QWebChannel
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtWebEngineWidgets import *
-from PyQt6.QtWebChannel import QWebChannel
 
 logger = logging.getLogger("module.app")
 backgroundMainColor = '#e8e8e8'
@@ -22,31 +23,39 @@ def main():
 
 class Backend(QObject):
     # Сигнал для передачи координат маркера
-    markerCoordinatesChanged = pyqtSignal(float, float)
+    markerCoordinatesChanged = pyqtSignal(list)
 
     # Слот для получения координат маркера из JavaScript
-    @pyqtSlot(float, float)
-    def receiveMarkerCoordinates(self, lat, lng):
+    @pyqtSlot(list)
+    def receiveMarkerCoordinates(self, markers):
         # Отправляем сигнал с координатами маркера
-        self.markerCoordinatesChanged.emit(lat, lng)
+        self.markerCoordinatesChanged.emit(markers)
+    
+    # Слот для обновления координат маркера после перемещения
+    @pyqtSlot(list)
+    def updateMarkerCoordinates(self, markers):
+        # Отправляем сигнал с координатами маркера
+        self.markerCoordinatesChanged.emit(markers)
 
 class MainWindow(QMainWindow):
 
     # Слот для обработки полученных координат маркера
-    def handleMarkerCoordinatesChanged(self, lat, lng):
-        # mess = f"Lat={round(lat,5)}, Lng={round(lng,5)}"
+    def handleMarkerCoordinatesChanged(self, markers):
         date = datetime.now()
-        curOutput = self.outlog.text()
-        self.outlog.setText(curOutput+"["+"%s:"%date.hour+"%s:"%date.minute+"%s "%date.second+"%s."%date.day+"%s."%date.month+"%s"%date.year+"]"+'<br>'+f'<a href="{lat}, {lng}">Lat: {round(lat,5)}, Lng: {round(lng,5)}</a>'+'<br><br>')
+        curOutput = " "
+        
+        for i in range(len(markers)):
+            self.outlog.setText(curOutput+f"{i+1} ["+"%s:"%date.hour+"%s:"%date.minute+"%s "%date.second+"%s."%date.day+"%s."%date.month+"%s"%date.year+"]"+'<br>'+f'<a href="{markers[i][1]}, {markers[i][2]}">Lat: {round(markers[i][1],5)}, Lng: {round(markers[i][2],5)}</a>'+'<br><br>')
+            curOutput = self.outlog.text()
 
-    # Слот для перемещения к указанным координатам на карте
-    def moveMapToCoordinates(self, lat, lng):
-        self.map_int.page().runJavaScript(f"map.setView([{lat}, {lng}], 13)") # Отправляем запрос на перемещение карты к указанным координатам
+    # Слот для обновления координат при перемещении маркера
+    def updateMarkerCoordinatesChanged(self, markers):
+        pass
 
     # Слот для обработки нажатия на ссылку в QLabel
     def handleLabelClick(self, link):
         lat, lng = map(float, link.split(','))
-        self.moveMapToCoordinates(lat, lng)
+        self.map_int.page().runJavaScript(f"map.setView([{lat}, {lng}], 13)")
         
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -61,7 +70,6 @@ class MainWindow(QMainWindow):
         # Загружаем HTML-файл в QWebEngineView
         file_path = os.path.abspath('map/map.html')
         self.map_int.load(QUrl.fromLocalFile(file_path))
-        self.backend.markerCoordinatesChanged.connect(self.handleMarkerCoordinatesChanged) # Подключаем сигнал от backend к слоту в MainWindow
                 
         # map_int = QWebEngineView()
         # map_int.load(QUrl.fromLocalFile(os.path.abspath('map/map.html')))
@@ -79,12 +87,15 @@ class MainWindow(QMainWindow):
         self.outlog.setAlignment(Qt.AlignmentFlag(1))
         self.outlog.setFont(QFont('Arial', 15))
         self.outlog.setText("\n")
-        # Устанавливаем обработчик событий нажатия на QLabel
-        self.outlog.linkActivated.connect(self.handleLabelClick)
         # Добавим возможность прокрутки при переполнении выходных данных
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
         scroll_area.setWidget(self.outlog)
+        
+        # Устанавливаем обработчик событий нажатия на QLabel
+        self.outlog.linkActivated.connect(self.handleLabelClick)
+        # Подключаем обработчик событий для QLabel
+        self.backend.markerCoordinatesChanged.connect(self.handleMarkerCoordinatesChanged)
 
         # Создание и настройка кнопок
         butNew = init_button("butNew", 65, 65)
