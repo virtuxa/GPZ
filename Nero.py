@@ -25,6 +25,7 @@ def pic_segment(filename, dir_in, dir_out, d):
     Output: The output value is an array of images
     """
     name, ext = os.path.splitext(filename)
+    ext = ".png"
     img = Image.open(os.path.join(dir_in, filename))
     w, h = img.size
     counter = 0
@@ -54,19 +55,16 @@ def detect_KZO(image, image_height, image_width, filepath_mod, counter):
     result = (res > 0.2).astype(np.uint8)
     plt.imshow(np.squeeze(result), cmap = 'gray')
     plt.axis('off')
-    save = 'image/test' + str(counter) + '.png'
+    save = 'image/Processed segment/foto' + str(counter) + '.png'
     plt.savefig(save, dpi = 150)
    
 
 if __name__ == "__main__":
     import sys
     filepath_model = 'location.keras'
-    filename = "TestDen1.png"
+    filename = "Foto12.png"
     image_path = 'image/'
     segment_path = 'image/Segment/'
-    if img is None:
-        print("Faild to load image file:")
-        sys.exit(1)
     img_wight = img_height = d = 512
     for path in [segment_path]:
         if not os.path.exists(path):
