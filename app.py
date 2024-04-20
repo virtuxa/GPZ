@@ -34,7 +34,19 @@ class MainWindow(QMainWindow):
 
     # Слот для обработки полученных координат маркера
     def handleMarkerCoordinatesChanged(self, lat, lng):
-        print(f"Received marker coordinates: Lat={lat}, Lng={lng}")
+        # mess = f"Lat={round(lat,5)}, Lng={round(lng,5)}"
+        date = datetime.now()
+        curOutput = self.outlog.text()
+        self.outlog.setText(curOutput+"["+"%s:"%date.hour+"%s:"%date.minute+"%s "%date.second+"%s."%date.day+"%s."%date.month+"%s"%date.year+"]"+'<br>'+f'<a href="{lat}, {lng}">Lat: {round(lat,5)}, Lng: {round(lng,5)}</a>'+'<br><br>')
+
+    # Слот для перемещения к указанным координатам на карте
+    def moveMapToCoordinates(self, lat, lng):
+        self.map_int.page().runJavaScript(f"map.setView([{lat}, {lng}], 13)") # Отправляем запрос на перемещение карты к указанным координатам
+
+    # Слот для обработки нажатия на ссылку в QLabel
+    def handleLabelClick(self, link):
+        lat, lng = map(float, link.split(','))
+        self.moveMapToCoordinates(lat, lng)
         
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -62,27 +74,33 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(960, 920)
         
         # Создание виджета выходных данных пользователя
-        outlog = QLabel()
-        outlog.setStyleSheet("border-radius: 10;background-color: white;")
-        outlog.setAlignment(Qt.AlignmentFlag(1))
-        outlog.setFont(QFont('Arial', 15))
-        outlog.setText("\n")
+        self.outlog = QLabel()
+        self.outlog.setStyleSheet("border-radius: 10;background-color: white;")
+        self.outlog.setAlignment(Qt.AlignmentFlag(1))
+        self.outlog.setFont(QFont('Arial', 15))
+        self.outlog.setText("\n")
+        # Устанавливаем обработчик событий нажатия на QLabel
+        self.outlog.linkActivated.connect(self.handleLabelClick)
+        # Добавим возможность прокрутки при переполнении выходных данных
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setWidget(self.outlog)
 
         # Создание и настройка кнопок
         butNew = init_button("butNew", 65, 65)
-        butNew.pressed.connect(lambda: log("Has detected event click button butNew", outlog))
+        butNew.pressed.connect(lambda: log("Has detected event click button butNew", self.outlog))
         butSave = init_button("butSave", 65, 65)
-        butSave.clicked.connect(lambda: log("Has detected event click button butSave", outlog))
+        butSave.clicked.connect(lambda: log("Has detected event click button butSave", self.outlog))
         butFile = init_button("butFile", 65, 65)
-        butFile.clicked.connect(lambda: log("Has detected event click button butFile", outlog))
+        butFile.clicked.connect(lambda: log("Has detected event click button butFile", self.outlog))
         butSett = init_button("butSett", 65, 65)
-        butSett.clicked.connect(lambda: log("Has detected event click button butSett", outlog))
+        butSett.clicked.connect(lambda: log("Has detected event click button butSett", self.outlog))
         butPoint = init_button("butPoint", 130, 65)
-        butPoint.clicked.connect(lambda: log("Has detected event click button butPoint", outlog))
+        butPoint.clicked.connect(lambda: log("Has detected event click button butPoint", self.outlog))
         butObject = init_button("butObject", 130, 65)
-        butObject.clicked.connect(lambda: log("Has detected event click button butObject", outlog))
+        butObject.clicked.connect(lambda: log("Has detected event click button butObject", self.outlog))
         butTrek = init_button("butTrek", 130, 65)
-        butTrek.clicked.connect(lambda: log("Has detected event click button butTrek", outlog))
+        butTrek.clicked.connect(lambda: log("Has detected event click button butTrek", self.outlog))
 
         # Создание структурных слоёв приложения
         layoutMain = QHBoxLayout()
@@ -108,7 +126,7 @@ class MainWindow(QMainWindow):
 
         # Добавление карты и выходных логов пользователя
         layoutSTLeftDown.addWidget(self.map_int,3)
-        layoutSTRightDown.addWidget(outlog,1)
+        layoutSTRightDown.addWidget(scroll_area,1)
 
         # Распределение столбцов по опорным слоям
         layoutSTLeft.addLayout(layoutSTLeftUp)
@@ -134,9 +152,7 @@ def log(mess, outlog):
     logger.info(mess)
     curOutput = outlog.text()
     date = datetime.now()
-    outlog.setText(curOutput+" ["+"%s:"%date.hour+"%s:"%date.minute+"%s "%date.second+"%s."%date.day+"%s."%date.month+"%s"%date.year+"]"+"\n")
-    curOutput = outlog.text()
-    outlog.setText(curOutput+" " + mess + "\n\n")
+    outlog.setText(curOutput+" ["+"%s:"%date.hour+"%s:"%date.minute+"%s "%date.second+"%s."%date.day+"%s."%date.month+"%s"%date.year+"]"+"\n "+mess+";"+"\n\n")
 
     return outlog
 
