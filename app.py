@@ -81,7 +81,7 @@ class MainWindow(QMainWindow):
         # Настройки главного окна
         self.setWindowTitle('Генератор полётных заданий')
         self.setGeometry(50, 50, 1200, 900)
-        self.setMinimumSize(960, 920)
+        self.setMinimumSize(500, 500)
         
         # Создание виджета выходных данных пользователя
         self.outlog = QLabel()

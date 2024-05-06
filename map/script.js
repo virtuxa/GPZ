@@ -34,15 +34,15 @@ var markers_data = []; // Переменная для отправки данн�
 var lines = []; // Переменная для хранения линий
 
 // Зададим настройки обьектов
-var wayPointIcon = L.icon({ // Настройка иконки маркера
-    iconUrl: '../map/assets/wayPoint.png', // URL картинки
-    iconSize: [36, 40], // Размеры картинки в пикселях
-    iconAnchor: [18, 40], // Точка, которая будет соответствовать точке на земле (относительно величины картинки)
-    popupAnchor: [0, -20] // Точка относительно iconAnchor, где будет открываться всплывающее окно (X, Y)
-});
+// var wayPointIcon = L.icon({ // Настройка иконки маркера
+//     iconUrl: '../map/assets/wayPoint.png', // URL картинки
+//     iconSize: [36, 40], // Размеры картинки в пикселях
+//     iconAnchor: [18, 40], // Точка, которая будет соответствовать точке на земле (относительно величины картинки)
+//     popupAnchor: [0, -20] // Точка относительно iconAnchor, где будет открываться всплывающее окно (X, Y)
+// });
 var lineOptions = { // Настройка линии
-    color: 'purple',
-    weight: 3,
+    color: 'red',
+    weight: 4,
 };
 var arrowheadsOptions = { // Настройка стрелки
     frequency: 2,
@@ -50,7 +50,6 @@ var arrowheadsOptions = { // Настройка стрелки
 }
 var markerOptions = { // Настройка маркеров
     draggable: true,
-    icon: wayPointIcon
 }
 
 // Зададим настройки QWebChannel
@@ -60,11 +59,12 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
 
 // Функция для добавления маркеров и соединения их линиями
 function addMarkerAndConnect(e) {
-    var marker = L.marker(e.latlng, markerOptions).addTo(map);
+    var marker = L.marker(e.latlng, {draggable: true, icon: new L.AwesomeNumberMarkers({number: markers.length+1})}).addTo(map);
     marker.bindPopup(e.latlng.toString()).openPopup(); // Отображение координат во всплывающем окне маркера
     markers.push(marker);
     
     if (markers.length > 1) {
+        // Если маркеров >= 2, создаём линию
         var prevMarker = markers[markers.length - 2].getLatLng();
         var currentMarker = marker.getLatLng();
         var line = L.polyline([prevMarker, currentMarker], lineOptions).arrowheads(arrowheadsOptions).addTo(map);
